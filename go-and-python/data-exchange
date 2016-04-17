@@ -48,3 +48,20 @@ func HTTPServe() {
 	server.Run(":" + global.config.HttpPort)
 
 }
+
+
+func main() {
+    //other code
+                        global.dataForExcel.Lock()
+			global.dataForExcel.config = string(tmpjson)
+			global.dataForExcel.data = strings.Join(lines, "\n")
+			global.dataForExcel.Unlock()
+
+	
+			cmd := exec.Command("cmd", "/c", "python", global.folder+"\\helper.py", global.config.HttpPort)
+
+			output, err := cmd.Output()
+			if err != nil {
+				log.Println(err.Error())
+			}
+}			

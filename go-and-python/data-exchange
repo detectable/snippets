@@ -1,3 +1,50 @@
 package main
-func main() {
+
+import (
+	"net/http"
+
+	//"strings"
+
+	"github.com/labstack/echo"
+	mw "github.com/labstack/echo/middleware"
+	//	"fmt"
+	//"html/template"
+)
+
+var server *echo.Echo
+
+func ping_reply(c *echo.Context) error {
+	return c.String(http.StatusOK, global.app_name)
+}
+
+func folder_reply(c *echo.Context) error {
+	return c.String(http.StatusOK, global.folder)
+}
+
+func excelConfig(c *echo.Context) error {
+	global.dataForExcel.RLock()
+	defer global.dataForExcel.RUnlock()
+	return c.String(http.StatusOK, global.dataForExcel.config)
+}
+
+func excelData(c *echo.Context) error {
+	global.dataForExcel.RLock()
+	defer global.dataForExcel.RUnlock()
+	return c.String(http.StatusOK, global.dataForExcel.data)
+}
+
+func HTTPServe() {
+	server = echo.New()
+	server.Use(mw.Logger())
+	server.Use(mw.Recover())
+	//	server.Use(mw.Gzip()) //actually slower
+
+	server.Get("/ping", ping_reply)
+
+	server.Get("/folder", folder_reply)
+	server.Get("/excel/config", excelConfig)
+	server.Get("/excel/data", excelData)
+
+	server.Run(":" + global.config.HttpPort)
+
 }
